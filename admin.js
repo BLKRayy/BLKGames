@@ -47,33 +47,29 @@ toggleMaintenance.addEventListener("click", () => {
   updateStatusPanel();
 });
 
-// ===== LOCKDOWN =====
-const lockdownMessageInput = document.getElementById("lockdownMessageInput");
-const lockdownMinutes = document.getElementById("lockdownMinutes");
-const startLockdown = document.getElementById("startLockdown");
-const clearLockdown = document.getElementById("clearLockdown");
-
+// ===== GLOBAL LOCKDOWN (URL-BASED) =====
 startLockdown.addEventListener("click", () => {
   const msg =
     lockdownMessageInput.value.trim() ||
     "Access Has Been Disabled by the Administrator";
   const mins = parseInt(lockdownMinutes.value) || 30;
 
-  const data = {
-    message: msg,
-    endTime: Date.now() + mins * 60000
-  };
+  const endTime = Date.now() + mins * 60000;
 
-  localStorage.setItem("lockdownData", JSON.stringify(data));
-  alert("Lockdown started.");
-  updateStatusPanel();
+  const base = "https://blkrayy.github.io/BLKGames/";
+  const url =
+    base +
+    `?lockdown=1&end=${endTime}&msg=${encodeURIComponent(msg)}`;
+
+  alert("Lockdown activated. Redirecting now.");
+  window.location.href = url;
 });
 
 clearLockdown.addEventListener("click", () => {
-  localStorage.removeItem("lockdownData");
-  alert("Lockdown cleared.");
-  updateStatusPanel();
+  localStorage.removeItem("globalLockdown");
+  alert("Lockdown cleared on this device. Other devices must refresh.");
 });
+
 
 // ===== IMPORT / EXPORT JSON =====
 const jsonBox = document.getElementById("jsonBox");
