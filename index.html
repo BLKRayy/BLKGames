@@ -7,61 +7,69 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="site-fade-in">
+<body class="theme-dark">
 
-  <!-- LOCKDOWN OVERLAY (CLEAN + SINGLE VERSION) -->
-  <div id="lockdownScreen" class="lockdown-screen hidden">
-    <div class="lockdown-box">
-      <div class="lock-icon-outline">
-        <div class="lock-body"></div>
-        <div class="lock-shackle"></div>
-      </div>
-
-      <h1 class="lock-title">ACCESS RESTRICTED</h1>
-      <p class="lock-subtitle">Access Has Been Disabled by the Administrator</p>
-
-      <p id="lockMessage" class="lock-message"></p>
-      <p id="lockTime" class="lock-time"></p>
-      <p id="lockCountdown" class="lock-countdown"></p>
-
-      <button id="lockdownOverrideBtn" class="lockdown-override-btn">
-        Unlock (Admin)
-      </button>
+  <div id="lockdownScreen" class="lockdown hidden">
+    <div class="lock-box">
+      <h1>ACCESS RESTRICTED</h1>
+      <p id="lockMsg"></p>
+      <p id="lockCountdown"></p>
+      <button id="lockAdmin">Admin Override</button>
     </div>
   </div>
 
   <header class="header">
-    <div class="header-left">
+    <div class="left">
       <img src="logo.png" class="logo">
-      <div class="title">
+      <div>
         <h1>BLK Games</h1>
-        <p>Unblocked • Fast • Electric</p>
+        <p>Unblocked • Fast • Clean</p>
       </div>
     </div>
 
-    <div class="header-right">
-      <span class="status-pill" id="maintenanceStatus">Online</span>
+    <div class="right">
+      <span id="maintStatus" class="status-pill">Online</span>
       <a href="admin.html" class="admin-link">Admin</a>
     </div>
   </header>
 
   <main class="main">
-    <section class="controls">
+
+    <section class="top-controls">
+      <button id="themeToggle" class="pill">Theme</button>
+      <button id="profileBtn" class="pill">Profile</button>
+    </section>
+
+    <section class="search-row">
       <input id="searchInput" class="search" placeholder="Search games...">
-      <select id="categoryFilter" class="filter">
-        <option value="All">All Games</option>
-      </select>
+      <select id="categoryFilter" class="filter"></select>
     </section>
 
-    <section class="section">
+    <section>
+      <h2>Categories</h2>
+      <div id="categoryChips" class="chips"></div>
+    </section>
+
+    <section>
+      <h2>Favorites</h2>
+      <div id="favoriteGames" class="grid"></div>
+    </section>
+
+    <section>
+      <h2>Recently Played</h2>
+      <div id="recentGames" class="grid"></div>
+    </section>
+
+    <section>
       <h2>Featured</h2>
-      <div id="featuredGames" class="game-grid"></div>
+      <div id="featuredGames" class="grid"></div>
     </section>
 
-    <section class="section">
+    <section>
       <h2>All Games</h2>
-      <div id="allGames" class="game-list"></div>
+      <div id="allGames" class="list"></div>
     </section>
+
   </main>
 
   <button id="aiButton" class="ai-orb">◎</button>
