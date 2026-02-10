@@ -1,338 +1,251 @@
-// =========================
-// GAME LOADING + HOMEPAGE RENDER
-// =========================
+let games = [];
+let profile = null;
 
-let gamesData = [];
+function loadProfile() {
+  const saved = localStorage.getItem("blkProfile");
+  if (saved) {
+    profile = JSON.parse(saved);
+  } else {
+    profile = { username: "Guest", favorites: [], recent: [], theme: "dark" };
+    saveProfile();
+  }
+  applyTheme(profile.theme);
+}
+
+function saveProfile() {
+  localStorage.setItem("blkProfile", JSON.stringify(profile));
+}
+
+function applyTheme(t) {
+  document.body.classList.remove("theme-dark", "theme-light");
+  document.body.classList.add(t === "light" ? "theme-light" : "theme-dark");
+}
+
+function toggleTheme() {
+  profile.theme = profile.theme === "light" ? "dark" : "light";
+  saveProfile();
+  applyTheme(profile.theme);
+}
 
 function loadGames() {
   fetch("games.json")
-    .then(res => res.json())
+    .then(r => r.json())
     .then(data => {
       const custom = localStorage.getItem("customGames");
-      if (custom) {
-        try {
-          data = JSON.parse(custom);
-        } catch {}
-      }
-      gamesData = data;
+      games = custom ? JSON.parse(custom) : data;
       populateCategories();
-      renderGames();
+      renderAll();
     });
 }
 
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
-  if (!select) return;
+  const chips = document.getElementById("categoryChips");
   const cats = new Set(["All"]);
-  gamesData.forEach(g => cats.add(g.category || "Other"));
+  games.forEach(g => cats.add(g.category));
+
   select.innerHTML = "";
   cats.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c + (c === "All" ? " Games" : "");
-    select.appendChild(opt);
-  });
-}
-
-function renderGames() {
-  const featuredContainer = document.getElementById("featuredGames");
-  const allContainer = document.getElementById("allGames");
-  const searchInput = document.getElementById("searchInput");
-  const categoryFilter = document.getElementById("categoryFilter");
-
-  if (!featuredContainer || !allContainer) return;
-
-  const query = (searchInput?.value || "").toLowerCase();
-  const category = categoryFilter?.value || "All";
-
-  const filtered = gamesData.filter(g => {
-    const matchesSearch =
-      g.name.toLowerCase().includes(query) ||
-      (g.category || "").toLowerCase().includes(query);
-    const matchesCategory =
-      category === "All" || (g.category || "Other") === category;
-    return matchesSearch && matchesCategory;
+    const o = document.createElement("option");
+    o.value = c;
+    o.textContent = c;
+    select.appendChild(o);
   });
 
-  const featured = filtered.filter(g => g.featured);
-  const nonFeatured = filtered;
-
-  featuredContainer.innerHTML = featured
-    .map(
-      g => `<button class="game-pill" onclick="openGame('${encodeURIComponent(
-        g.url
-      )}')">${g.name}</button>`
-    )
-    .join("");
-
-  allContainer.innerHTML = nonFeatured
-    .map(
-      g => `
-      <div class="game-row" onclick="openGame('${encodeURIComponent(g.url)}')">
-        <span>${g.name}</span>
-        <span>${g.category || "Other"}</span>
-      </div>`
-    )
-    .join("");
-}
-
-function openGame(urlEncoded) {
-  const url = decodeURIComponent(urlEncoded);
-  window.open(url, "_blank");
-
-  const playCounts = JSON.parse(localStorage.getItem("playCounts") || "{}");
-  const name = gamesData.find(g => g.url === url)?.name || url;
-  playCounts[name] = (playCounts[name] || 0) + 1;
-  localStorage.setItem("playCounts", JSON.stringify(playCounts));
-}
-
-// =========================
-// MAINTENANCE INDICATOR
-// =========================
-
-function applyMaintenanceStatus() {
-  const pill = document.getElementById("maintenanceStatus");
-  if (!pill) return;
-  const maintenance = localStorage.getItem("maintenance") === "true";
-  if (maintenance) {
-    pill.textContent = "Maintenance";
-    pill.style.background = "#451a03";
-    pill.style.color = "#fed7aa";
-  } else {
-    pill.textContent = "Online";
-    pill.style.background = "#022c22";
-    pill.style.color = "#6ee7b7";
-  }
-}
-
-// =========================
-// GLOBAL LOCKDOWN SYSTEM (NEW)
-// =========================
-
-const lockdownScreen = document.getElementById("lockdownScreen");
-const lockMessage = document.getElementById("lockMessage");
-const lockTime = document.getElementById("lockTime");
-const lockCountdown = document.getElementById("lockCountdown");
-
-let lockdownInterval = null;
-
-function applyGlobalLockdown(data) {
-  if (!data) {
-    lockdownScreen.classList.add("hidden");
-    if (lockdownInterval) clearInterval(lockdownInterval);
-    return;
-  }
-
-  lockdownScreen.classList.remove("hidden");
-
-  function update() {
-    const now = Date.now();
-    if (now >= data.end) {
-      clearInterval(lockdownInterval);
-      localStorage.removeItem("globalLockdown");
-      lockdownScreen.classList.add("hidden");
-      return;
-    }
-
-    const diff = data.end - now;
-    const mins = Math.floor(diff / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-
-    lockMessage.textContent = data.msg;
-    lockTime.textContent = "Current Time: " + new Date().toLocaleTimeString();
-    lockCountdown.textContent = `Lockdown ends in: ${mins}m ${secs}s`;
-  }
-
-  update();
-  lockdownInterval = setInterval(update, 1000);
-}
-
-function readLockdownFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const isLock = params.get("lockdown");
-  const end = params.get("end");
-  const msg = params.get("msg");
-
-  if (isLock === "1" && end) {
-    const data = {
-      end: parseInt(end, 10),
-      msg: decodeURIComponent(msg || "Access Has Been Disabled by the Administrator")
+  chips.innerHTML = "";
+  cats.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.textContent = c;
+    b.onclick = () => {
+      select.value = c;
+      renderAll();
     };
-
-    localStorage.setItem("globalLockdown", JSON.stringify(data));
-    applyGlobalLockdown(data);
-    return;
-  }
-
-  const stored = localStorage.getItem("globalLockdown");
-  if (stored) {
-    try {
-      const data = JSON.parse(stored);
-      if (data.end > Date.now()) {
-        applyGlobalLockdown(data);
-      } else {
-        localStorage.removeItem("globalLockdown");
-        applyGlobalLockdown(null);
-      }
-    } catch {
-      localStorage.removeItem("globalLockdown");
-      applyGlobalLockdown(null);
-    }
-  }
-}
-
-// =========================
-// LOCKDOWN OVERRIDE BUTTON
-// =========================
-
-const overrideBtn = document.getElementById("lockdownOverrideBtn");
-if (overrideBtn) {
-  overrideBtn.addEventListener("click", () => {
-    window.location.href = "admin.html";
+    chips.appendChild(b);
   });
 }
 
-// =========================
-// HOMEPAGE EVENTS
-// =========================
-
-document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("searchInput");
-  const categoryFilter = document.getElementById("categoryFilter");
-
-  if (searchInput) searchInput.addEventListener("input", renderGames);
-  if (categoryFilter) categoryFilter.addEventListener("change", renderGames);
-
-  loadGames();
-  applyMaintenanceStatus();
-  readLockdownFromURL();
-});
-
-// =========================
-// AI SYSTEM (UNCHANGED)
-// =========================
-
-const aiButton = document.getElementById("aiButton");
-const aiModal = document.getElementById("aiModal");
-const aiClose = document.getElementById("aiClose");
-const aiMessages = document.getElementById("aiMessages");
-const aiInput = document.getElementById("aiInput");
-const aiSend = document.getElementById("aiSend");
-const aiMic = document.getElementById("aiMic");
-
-let aiMemory = [];
-
-function addAiMessage(text, from = "bot") {
-  const div = document.createElement("div");
-  div.className = "ai-msg " + (from === "bot" ? "ai-bot" : "ai-user");
-  div.textContent = text;
-  aiMessages.appendChild(div);
-  aiMessages.scrollTop = aiMessages.scrollHeight;
+function filteredGames() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const cat = document.getElementById("categoryFilter").value;
+  return games.filter(g =>
+    (cat === "All" || g.category === cat) &&
+    g.name.toLowerCase().includes(q)
+  );
 }
 
-function addTyping() {
-  const wrap = document.createElement("div");
-  wrap.className = "ai-msg ai-bot";
-  wrap.id = "aiTyping";
-  wrap.innerHTML = `
-    <div class="ai-typing">
-      <div></div><div></div><div></div>
+function renderAll() {
+  const fav = document.getElementById("favoriteGames");
+  const rec = document.getElementById("recentGames");
+  const feat = document.getElementById("featuredGames");
+  const all = document.getElementById("allGames");
+
+  const f = filteredGames();
+
+  feat.innerHTML = f.filter(g => g.featured).map(card).join("");
+  all.innerHTML = f.map(row).join("");
+
+  fav.innerHTML = games
+    .filter(g => profile.favorites.includes(g.url))
+    .map(card)
+    .join("");
+
+  rec.innerHTML = profile.recent
+    .map(u => games.find(g => g.url === u))
+    .filter(Boolean)
+    .map(card)
+    .join("");
+}
+
+function card(g) {
+  return `
+    <div class="card">
+      <div class="thumb" onclick="openGame('${g.url}')">
+        <img src="${g.logo || 'default-icon.png'}">
+      </div>
+      <button class="fav" onclick="toggleFav(event,'${g.url}')">★</button>
+      <div>${g.name}</div>
+      <div style="font-size:12px;color:#9ca3af">${g.category}</div>
     </div>
   `;
-  aiMessages.appendChild(wrap);
-  aiMessages.scrollTop = aiMessages.scrollHeight;
 }
 
-function removeTyping() {
-  const t = document.getElementById("aiTyping");
-  if (t) t.remove();
+function row(g) {
+  return `
+    <div class="row" onclick="openGame('${g.url}')">
+      <span>${g.name}</span>
+      <span>${g.category}</span>
+    </div>
+  `;
 }
 
-function solveMath(expr) {
-  try {
-    const result = Function(`"use strict"; return (${expr});`)();
-    if (typeof result === "number" && isFinite(result)) return result;
-    return "I can only solve numeric expressions.";
-  } catch {
-    return "I couldn't understand that expression.";
-  }
+function toggleFav(e, url) {
+  e.stopPropagation();
+  const i = profile.favorites.indexOf(url);
+  if (i === -1) profile.favorites.push(url);
+  else profile.favorites.splice(i, 1);
+  saveProfile();
+  renderAll();
 }
 
-function aiReply(input) {
-  const q = input.trim();
-  aiMemory.push(q);
-
-  if (/^[0-9+\-*/().\s^]+$/.test(q)) {
-    return "Answer: " + solveMath(q);
-  }
-
-  if (q.toLowerCase().includes("games")) {
-    return "You currently have " + gamesData.length + " games installed.";
-  }
-
-  if (q.toLowerCase().includes("remember")) {
-    aiMemory.push("memory:" + q);
-    return "Okay, I'll remember that for this session.";
-  }
-
-  return "I can solve math, answer questions, remember things for this session, and help you explore BLK Games.";
+function openGame(url) {
+  window.open(url, "_blank");
+  const i = profile.recent.indexOf(url);
+  if (i !== -1) profile.recent.splice(i, 1);
+  profile.recent.unshift(url);
+  if (profile.recent.length > 10) profile.recent.pop();
+  saveProfile();
+  renderAll();
 }
 
-function sendAi() {
-  const text = aiInput.value.trim();
-  if (!text) return;
-
-  addAiMessage(text, "user");
-  aiInput.value = "";
-
-  addTyping();
-
-  setTimeout(() => {
-    removeTyping();
-    addAiMessage(aiReply(text), "bot");
-  }, 600);
+function applyMaintenance() {
+  const pill = document.getElementById("maintStatus");
+  const m = localStorage.getItem("maintenance") === "true";
+  pill.textContent = m ? "Maintenance" : "Online";
+  pill.style.background = m ? "#451a03" : "#022c22";
 }
 
-aiButton.addEventListener("click", () => {
-  aiModal.classList.remove("hidden");
-  if (!aiMessages.children.length) {
-    addAiMessage("Hey, I'm BLK Copilot. Ask me anything!", "bot");
+function applyLockdown() {
+  const box = document.getElementById("lockdownScreen");
+  const data = JSON.parse(localStorage.getItem("globalLockdown") || "null");
+  if (!data) return;
+
+  box.classList.remove("hidden");
+
+  function tick() {
+    const now = Date.now();
+    if (now >= data.end) {
+      localStorage.removeItem("globalLockdown");
+      box.classList.add("hidden");
+      return;
+    }
+    const diff = data.end - now;
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById("lockMsg").textContent = data.msg;
+    document.getElementById("lockCountdown").textContent = `${m}m ${s}s`;
   }
-});
 
-aiClose.addEventListener("click", () => aiModal.classList.add("hidden"));
-aiSend.addEventListener("click", sendAi);
+  tick();
+  setInterval(tick, 1000);
+}
 
-aiInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendAi();
-});
+function initAI() {
+  const modal = document.getElementById("aiModal");
+  const btn = document.getElementById("aiButton");
+  const close = document.getElementById("aiClose");
+  const send = document.getElementById("aiSend");
+  const input = document.getElementById("aiInput");
+  const msgs = document.getElementById("aiMessages");
 
-let isDragging = false;
-let offsetX = 0;
-let offsetY = 0;
-
-aiModal.querySelector(".ai-header").addEventListener("mousedown", e => {
-  isDragging = true;
-  offsetX = e.clientX - aiModal.offsetLeft;
-  offsetY = e.clientY - aiModal.offsetTop;
-});
-
-document.addEventListener("mouseup", () => (isDragging = false));
-
-document.addEventListener("mousemove", e => {
-  if (isDragging) {
-    aiModal.style.left = e.clientX - offsetX + "px";
-    aiModal.style.top = e.clientY - offsetY + "px";
+  function add(text, who) {
+    const d = document.createElement("div");
+    d.className = "ai-msg " + (who === "user" ? "ai-user" : "ai-bot");
+    d.textContent = text;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
   }
-});
 
-aiMic.addEventListener("click", () => {
-  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  rec.lang = "en-US";
-  rec.start();
+  function reply(q) {
+    const t = q.toLowerCase();
 
-  rec.onresult = e => {
-    aiInput.value = e.results[0][0].transcript;
-    sendAi();
+    if (/^[0-9+\-*/().\s^]+$/.test(q)) {
+      try {
+        return "Answer: " + Function(`return (${q})`)();
+      } catch {
+        return "Invalid math expression.";
+      }
+    }
+
+    if (t.includes("favorite")) {
+      if (!profile.favorites.length) return "You have no favorites yet.";
+      return "Favorites: " + profile.favorites.length;
+    }
+
+    if (t.includes("games")) {
+      return "Total games: " + games.length;
+    }
+
+    return "I can solve math, recommend games, and show your favorites.";
+  }
+
+  btn.onclick = () => {
+    modal.classList.remove("hidden");
+    if (!msgs.children.length) add("Hey, I'm BLK Copilot!", "bot");
   };
+
+  close.onclick = () => modal.classList.add("hidden");
+
+  send.onclick = () => {
+    const q = input.value.trim();
+    if (!q) return;
+    add(q, "user");
+    input.value = "";
+    setTimeout(() => add(reply(q), "bot"), 300);
+  };
+
+  input.onkeydown = e => {
+    if (e.key === "Enter") send.onclick();
+  };
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadProfile();
+  loadGames();
+  applyMaintenance();
+  applyLockdown();
+
+  document.getElementById("themeToggle").onclick = toggleTheme;
+  document.getElementById("profileBtn").onclick = () => {
+    const n = prompt("Username:", profile.username);
+    if (n) {
+      profile.username = n;
+      saveProfile();
+    }
+  };
+
+  document.getElementById("searchInput").oninput = renderAll;
+  document.getElementById("categoryFilter").onchange = renderAll;
+
+  initAI();
 });
