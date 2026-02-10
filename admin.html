@@ -7,7 +7,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="site-fade-in">
+
+  <header class="header">
+    <div class="header-left">
+      <img src="logo.png" class="logo">
+      <div class="title">
+        <h1>BLK Admin</h1>
+        <p>Control • Lockdown • Edit</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="admin-link">Back to Site</a>
+    </div>
+  </header>
 
   <div class="admin-login" id="adminLogin">
     <h2>Admin Login</h2>
@@ -21,12 +34,12 @@
     <aside class="admin-sidebar">
       <button data-page="home">Dashboard</button>
       <button data-page="maintenance">Maintenance</button>
-      <button data-page="changelog">Changelog</button>
+      <button data-page="lockdown">Lockdown Timer</button>
       <button data-page="featured">Featured</button>
       <button data-page="games">Game Editor</button>
       <button data-page="importexport">Import / Export</button>
       <button data-page="logs">Player Logs</button>
-      <button id="adminLogout">Logout</button>
+      <button id="adminLogout">Sign out</button>
     </aside>
 
     <main class="admin-main">
@@ -38,13 +51,23 @@
 
       <section class="admin-page" id="page-maintenance">
         <h2>Maintenance Mode</h2>
+        <p>Toggle global maintenance overlay on the main site.</p>
         <button id="toggleMaintenance">Toggle Maintenance</button>
       </section>
 
-      <section class="admin-page" id="page-changelog">
-        <h2>Changelog Editor</h2>
-        <textarea id="changelogEditor" placeholder="Write updates here..."></textarea>
-        <button id="saveChangelog">Save</button>
+      <section class="admin-page" id="page-lockdown">
+        <h2>Server Lockdown</h2>
+        <p>Set a temporary lockdown timer that shows on the homepage.</p>
+        <label>
+          Lockdown message:
+          <input id="lockdownMessageInput" placeholder="Reason or message">
+        </label>
+        <label>
+          Duration (minutes):
+          <input id="lockdownMinutes" type="number" min="1" max="240" value="30">
+        </label>
+        <button id="startLockdown">Start Lockdown</button>
+        <button id="clearLockdown">Clear Lockdown</button>
       </section>
 
       <section class="admin-page" id="page-featured">
@@ -59,7 +82,7 @@
 
       <section class="admin-page" id="page-importexport">
         <h2>Import / Export JSON</h2>
-        <textarea id="jsonBox" placeholder="Paste JSON here..."></textarea>
+        <textarea id="jsonBox" placeholder="Paste JSON here..." style="width:100%;height:160px;"></textarea>
         <button id="exportJSON">Export</button>
         <button id="importJSON">Import</button>
         <button id="resetDefaults">Reset to Default</button>
