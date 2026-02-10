@@ -1,86 +1,72 @@
 [
   {
-    "name": "1v1.lol",
-    "category": "Shooting",
-    "url": "https://1v1.lol",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "1v1.space",
+    "name": "Slope",
+    "url": "https://ubg100.github.io/slope/",
     "category": "Arcade",
-    "url": "https://1v1.space",
-    "featured": false,
-    "logo": ""
-  },
-  {
-    "name": "10 Minutes Till Dawn",
-    "category": "Action",
-    "url": "https://10minutestilldawn.io",
-    "featured": false,
-    "logo": ""
-  },
-  {
-    "name": "2048",
-    "category": "Puzzle",
-    "url": "https://play2048.co",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "A Dark Room",
-    "category": "Adventure",
-    "url": "https://adarkroom.doublespeakgames.com",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "Among Us",
-    "category": "Multiplayer",
-    "url": "https://amongusplay.online",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "Bad Ice Cream",
-    "category": "Puzzle",
-    "url": "https://badicecream.online",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "Baldi’s Basics",
-    "category": "Horror",
-    "url": "https://baldis-basics.com",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "Basketball Stars",
-    "category": "Sports",
-    "url": "https://basketballstars.io",
-    "featured": true,
-    "logo": ""
-  },
-  {
-    "name": "Moto X3M",
-    "category": "Racing",
-    "url": "https://motox3m.co",
-    "featured": true,
-    "logo": ""
+    "logo": "https://i.imgur.com/8Q1ZQyN.png",
+    "featured": true
   },
   {
     "name": "Run 3",
-    "category": "Platformer",
-    "url": "https://run3.io",
-    "featured": true,
-    "logo": ""
+    "url": "https://run3.io/",
+    "category": "Arcade",
+    "logo": "https://i.imgur.com/0pQxF2o.png",
+    "featured": true
   },
   {
-    "name": "Subway Surfers",
-    "category": "Endless Runner",
-    "url": "https://subwaysurfers.io",
-    "featured": true,
-    "logo": ""
+    "name": "1v1.lol",
+    "url": "https://1v1.lol/",
+    "category": "Shooter",
+    "logo": "https://i.imgur.com/2m0uZyX.png",
+    "featured": false
+  },
+  {
+    "name": "Retro Bowl",
+    "url": "https://retro-bowl.io/",
+    "category": "Sports",
+    "logo": "https://i.imgur.com/8v0mV8k.png",
+    "featured": true
+  },
+  {
+    "name": "Basketball Stars",
+    "url": "https://basketball-stars.co/",
+    "category": "Sports",
+    "logo": "https://i.imgur.com/6m2p4yB.png",
+    "featured": false
+  },
+  {
+    "name": "Moto X3M",
+    "url": "https://motox3m.co/",
+    "category": "Racing",
+    "logo": "https://i.imgur.com/5b0x0mF.png",
+    "featured": false
+  },
+  {
+    "name": "Drift Hunters",
+    "url": "https://drift-hunters.co/",
+    "category": "Racing",
+    "logo": "https://i.imgur.com/4Q2m3uT.png",
+    "featured": true
+  },
+  {
+    "name": "Cookie Clicker",
+    "url": "https://orteil.dashnet.org/cookieclicker/",
+    "category": "Idle",
+    "logo": "https://i.imgur.com/1x2x3xA.png",
+    "featured": false
+  },
+  {
+    "name": "Tiny Fishing",
+    "url": "https://tiny-fishing.co/",
+    "category": "Casual",
+    "logo": "https://i.imgur.com/7m3n4pQ.png",
+    "featured": false
+  },
+  {
+    "name": "Crossy Road",
+    "url": "https://crossyroad.io/",
+    "category": "Casual",
+    "logo": "https://i.imgur.com/3k4l5mN.png",
+    "featured": false
   }
 ]
