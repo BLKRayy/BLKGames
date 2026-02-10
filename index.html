@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLK Games</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div id="particles"></div>
+
+  <header class="header">
+    <img src="logo.png" class="logo">
+    <div class="title">
+      <h1>BLK Games</h1>
+      <p>Unblocked • Fast • Electric</p>
+    </div>
+  </header>
+
+  <section class="search-area">
+    <input id="searchInput" placeholder="Search games...">
+  </section>
+
+  <section class="category-area">
+    <select id="categorySelect">
+      <option value="all">All Games</option>
+      <option value="favorites">Favorites</option>
+      <option value="recent">Recently Played</option>
+      <option value="Action">Action</option>
+      <option value="Adventure">Adventure</option>
+      <option value="Arcade">Arcade</option>
+      <option value="Puzzle">Puzzle</option>
+      <option value="Sports">Sports</option>
+      <option value="Shooting">Shooting</option>
+      <option value="Horror">Horror</option>
+      <option value="Strategy">Strategy</option>
+      <option value="Platformer">Platformer</option>
+      <option value="Racing">Racing</option>
+    </select>
+  </section>
+
+  <section class="featured">
+    <h2>Featured</h2>
+    <div class="featured-row" id="featuredRow"></div>
+  </section>
+
+  <section class="games">
+    <h2>All Games</h2>
+    <div class="game-grid" id="gameGrid"></div>
+  </section>
+
+  <div class="viewer hidden" id="viewerOverlay">
+    <div class="viewer-header">
+      <h2 id="viewerTitle"></h2>
+      <button id="viewerClose">Close</button>
+    </div>
+    <iframe id="viewerFrame"></iframe>
+    <p class="fullscreen-hint">Press F11 for fullscreen</p>
+  </div>
+
+  <div class="ai-orb" id="aiButton"></div>
+
+  <div class="ai-modal hidden" id="aiModal">
+    <div class="ai-modal-header">
+      <strong>AI Mode</strong>
+      <button id="aiClose">X</button>
+    </div>
+    <div class="ai-messages" id="aiMessages"></div>
+    <input id="aiInput" placeholder="Ask something...">
+  </div>
+
+  <div class="maintenance hidden" id="maintenanceOverlay">
+    <div class="maintenance-box">
+      <h2>Maintenance Mode</h2>
+      <p>The site is currently under maintenance.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
