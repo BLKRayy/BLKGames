@@ -1,183 +1,148 @@
-let games = [];
-let playCounts = {};
-let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-let recent = JSON.parse(localStorage.getItem("recent") || "[]");
-let maintenance = localStorage.getItem("maintenance") === "true";
+// Load games and render homepage
+let gamesData = [];
 
-let playerName = localStorage.getItem("playerName") || "";
-const playerInput = document.getElementById("player-name");
+function loadGames() {
+  fetch("games.json")
+    .then(res => res.json())
+    .then(data => {
+      const custom = localStorage.getItem("customGames");
+      if (custom) {
+        try {
+          data = JSON.parse(custom);
+        } catch {}
+      }
+      gamesData = data;
+      populateCategories();
+      renderGames();
+    });
+}
 
-if (playerInput) {
-  playerInput.value = playerName;
-  playerInput.addEventListener("input", e => {
-    playerName = e.target.value.trim();
-    localStorage.setItem("playerName", playerName);
+function populateCategories() {
+  const select = document.getElementById("categoryFilter");
+  if (!select) return;
+  const cats = new Set(["All"]);
+  gamesData.forEach(g => cats.add(g.category || "Other"));
+  select.innerHTML = "";
+  cats.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c + (c === "All" ? " Games" : "");
+    select.appendChild(opt);
   });
 }
 
-function loadPlayCounts() {
-  try {
-    playCounts = JSON.parse(localStorage.getItem("playCounts") || "{}");
-  } catch {
-    playCounts = {};
-  }
+function renderGames() {
+  const featuredContainer = document.getElementById("featuredGames");
+  const allContainer = document.getElementById("allGames");
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  if (!featuredContainer || !allContainer) return;
+
+  const query = (searchInput?.value || "").toLowerCase();
+  const category = categoryFilter?.value || "All";
+
+  const filtered = gamesData.filter(g => {
+    const matchesSearch =
+      g.name.toLowerCase().includes(query) ||
+      (g.category || "").toLowerCase().includes(query);
+    const matchesCategory =
+      category === "All" || (g.category || "Other") === category;
+    return matchesSearch && matchesCategory;
+  });
+
+  const featured = filtered.filter(g => g.featured);
+  const nonFeatured = filtered;
+
+  featuredContainer.innerHTML = featured
+    .map(
+      g => `<button class="game-pill" onclick="openGame('${encodeURIComponent(
+        g.url
+      )}')">${g.name}</button>`
+    )
+    .join("");
+
+  allContainer.innerHTML = nonFeatured
+    .map(
+      g => `
+      <div class="game-row" onclick="openGame('${encodeURIComponent(g.url)}')">
+        <span>${g.name}</span>
+        <span>${g.category || "Other"}</span>
+      </div>`
+    )
+    .join("");
 }
 
-function savePlayCounts() {
+function openGame(urlEncoded) {
+  const url = decodeURIComponent(urlEncoded);
+  window.open(url, "_blank");
+
+  const playCounts = JSON.parse(localStorage.getItem("playCounts") || "{}");
+  const name = gamesData.find(g => g.url === url)?.name || url;
+  playCounts[name] = (playCounts[name] || 0) + 1;
   localStorage.setItem("playCounts", JSON.stringify(playCounts));
 }
 
-async function loadGames() {
-  const res = await fetch("games.json");
-  games = await res.json();
-  buildGameGrid(games);
-  buildFeatured(games);
-}
-
-const gameGrid = document.getElementById("gameGrid");
-
-function buildGameGrid(list) {
-  if (!gameGrid) return;
-
-  gameGrid.innerHTML = "";
-
-  list.forEach(game => {
-    const card = document.createElement("div");
-    card.className = "game-card";
-    card.innerHTML = `
-      <h3>${game.name}</h3>
-      <p>${game.category}</p>
-    `;
-    card.addEventListener("click", () => openViewer(game));
-    gameGrid.appendChild(card);
-  });
-}
-
-const featuredRow = document.getElementById("featuredRow");
-
-function buildFeatured(list) {
-  if (!featuredRow) return;
-
-  featuredRow.innerHTML = "";
-
-  list.filter(g => g.featured).forEach(game => {
-    const card = document.createElement("div");
-    card.className = "game-card";
-    card.innerHTML = `<h3>${game.name}</h3>`;
-    card.addEventListener("click", () => openViewer(game));
-    featuredRow.appendChild(card);
-  });
-}
-
-const searchInput = document.getElementById("searchInput");
-
-if (searchInput) {
-  searchInput.addEventListener("input", () => {
-    const q = searchInput.value.toLowerCase();
-    const filtered = games.filter(g =>
-      g.name.toLowerCase().includes(q) ||
-      g.category.toLowerCase().includes(q)
-    );
-    buildGameGrid(filtered);
-  });
-}
-
-const categorySelect = document.getElementById("categorySelect");
-
-if (categorySelect) {
-  categorySelect.addEventListener("change", () => {
-    const cat = categorySelect.value;
-
-    if (cat === "all") return buildGameGrid(games);
-    if (cat === "favorites") return buildGameGrid(games.filter(g => favorites.includes(g.name)));
-    if (cat === "recent") return buildGameGrid(games.filter(g => recent.includes(g.name)));
-
-    buildGameGrid(games.filter(g => g.category === cat));
-  });
-}
-
-function toggleFavorite(name) {
-  if (favorites.includes(name)) {
-    favorites = favorites.filter(f => f !== name);
+// Maintenance indicator
+function applyMaintenanceStatus() {
+  const pill = document.getElementById("maintenanceStatus");
+  if (!pill) return;
+  const maintenance = localStorage.getItem("maintenance") === "true";
+  if (maintenance) {
+    pill.textContent = "Maintenance";
+    pill.style.background = "#451a03";
+    pill.style.color = "#fed7aa";
   } else {
-    favorites.push(name);
+    pill.textContent = "Online";
+    pill.style.background = "#022c22";
+    pill.style.color = "#6ee7b7";
   }
-  localStorage.setItem("favorites", JSON.stringify(favorites));
 }
 
-function addRecent(name) {
-  recent = recent.filter(r => r !== name);
-  recent.unshift(name);
-  if (recent.length > 10) recent.pop();
-  localStorage.setItem("recent", JSON.stringify(recent));
-}
+// Lockdown overlay
+function applyLockdown() {
+  const screen = document.getElementById("lockdownScreen");
+  if (!screen) return;
 
-const viewerOverlay = document.getElementById("viewerOverlay");
-const viewerTitle = document.getElementById("viewerTitle");
-const viewerCategory = document.getElementById("viewerCategory");
-const viewerFrame = document.getElementById("viewerFrame");
-const viewerClose = document.getElementById("viewerClose");
+  const data = JSON.parse(localStorage.getItem("lockdownData") || "null");
+  if (!data) {
+    screen.classList.add("hidden");
+    return;
+  }
 
-function openViewer(game) {
-  viewerTitle.textContent = game.name;
-  viewerFrame.src = game.url;
-
-  viewerOverlay.classList.remove("hidden");
-
-  playCounts[game.name] = (playCounts[game.name] || 0) + 1;
-  savePlayCounts();
-
-  addRecent(game.name);
-}
-
-if (viewerClose) {
-  viewerClose.addEventListener("click", () => {
-    viewerOverlay.classList.add("hidden");
-    viewerFrame.src = "";
-  });
-}
-
-const aiButton = document.getElementById("aiButton");
-const aiModal = document.getElementById("aiModal");
-const aiClose = document.getElementById("aiClose");
-const aiMessages = document.getElementById("aiMessages");
-const aiInput = document.getElementById("aiInput");
-
-if (aiButton) {
-  aiButton.addEventListener("click", () => {
-    aiModal.classList.remove("hidden");
-  });
-}
-
-if (aiClose) {
-  aiClose.addEventListener("click", () => {
-    aiModal.classList.add("hidden");
-  });
-}
-
-if (aiInput) {
-  aiInput.addEventListener("keydown", e => {
-    if (e.key === "Enter" && aiInput.value.trim() !== "") {
-      const msg = document.createElement("div");
-      msg.textContent = aiInput.value;
-      aiMessages.appendChild(msg);
-      aiInput.value = "";
-      aiMessages.scrollTop = aiMessages.scrollHeight;
+  function update() {
+    const now = Date.now();
+    if (now >= data.endTime) {
+      localStorage.removeItem("lockdownData");
+      screen.classList.add("hidden");
+      return;
     }
-  });
-}
 
-const maintenanceOverlay = document.getElementById("maintenanceOverlay");
+    const diff = data.endTime - now;
+    const mins = Math.floor(diff / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
 
-function applyMaintenance() {
-  if (maintenance && maintenanceOverlay) {
-    maintenanceOverlay.classList.remove("hidden");
-  } else if (maintenanceOverlay) {
-    maintenanceOverlay.classList.add("hidden");
+    document.getElementById("lockMessage").textContent = data.message;
+    document.getElementById("lockTime").textContent =
+      "Current Time: " + new Date().toLocaleTimeString();
+    document.getElementById("lockCountdown").textContent =
+      "Lockdown ends in: " + mins + "m " + secs + "s";
   }
+
+  screen.classList.remove("hidden");
+  update();
+  setInterval(update, 1000);
 }
 
-applyMaintenance();
+// Events
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
 
-loadPlayCounts();
-loadGames();
+  if (searchInput) searchInput.addEventListener("input", renderGames);
+  if (categoryFilter) categoryFilter.addEventListener("change", renderGames);
+
+  loadGames();
+  applyMaintenanceStatus();
+  applyLockdown();
+});
