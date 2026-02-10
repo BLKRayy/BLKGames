@@ -146,7 +146,13 @@ document.addEventListener("DOMContentLoaded", () => {
   applyMaintenanceStatus();
   applyLockdown();
 });
-// ===== AI SYSTEM =====
+
+
+
+// =========================
+// HOMEPAGE AI SYSTEM
+// =========================
+
 const aiButton = document.getElementById("aiButton");
 const aiModal = document.getElementById("aiModal");
 const aiClose = document.getElementById("aiClose");
@@ -155,7 +161,7 @@ const aiInput = document.getElementById("aiInput");
 const aiSend = document.getElementById("aiSend");
 const aiMic = document.getElementById("aiMic");
 
-let aiMemory = []; // session memory
+let aiMemory = [];
 
 function addAiMessage(text, from = "bot") {
   const div = document.createElement("div");
@@ -169,13 +175,11 @@ function addTyping() {
   const wrap = document.createElement("div");
   wrap.className = "ai-msg ai-bot";
   wrap.id = "aiTyping";
-
   wrap.innerHTML = `
     <div class="ai-typing">
       <div></div><div></div><div></div>
     </div>
   `;
-
   aiMessages.appendChild(wrap);
   aiMessages.scrollTop = aiMessages.scrollHeight;
 }
@@ -212,7 +216,7 @@ function aiReply(input) {
     return "Okay, I'll remember that for this session.";
   }
 
-  return "I can solve math (K–12), answer questions, remember things for this session, and help you explore BLK Games.";
+  return "I can solve math, answer questions, remember things for this session, and help you explore BLK Games.";
 }
 
 function sendAi() {
@@ -244,7 +248,7 @@ aiInput.addEventListener("keydown", e => {
   if (e.key === "Enter") sendAi();
 });
 
-// ===== DRAGGABLE AI WINDOW =====
+// Draggable AI window
 let isDragging = false;
 let offsetX = 0;
 let offsetY = 0;
@@ -264,7 +268,7 @@ document.addEventListener("mousemove", e => {
   }
 });
 
-// ===== VOICE INPUT =====
+// Voice input
 aiMic.addEventListener("click", () => {
   const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   rec.lang = "en-US";
