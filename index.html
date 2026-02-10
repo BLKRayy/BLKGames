@@ -7,34 +7,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="site-fade-in">
+<body>
 
-  <!-- Lockdown Takeover (homepage only) -->
-  <div id="lockdownScreen" class="lockdown-screen hidden">
-    <div class="lockdown-box">
-      <div class="lock-icon-outline">
-        <div class="lock-body"></div>
-        <div class="lock-shackle"></div>
-      </div>
-      <h1 class="lock-title">ACCESS RESTRICTED</h1>
-      <p class="lock-subtitle">Access Has Been Disabled by the Administrator</p>
-      <p id="lockMessage" class="lock-message"></p>
-      <p id="lockTime" class="lock-time"></p>
-      <p id="lockCountdown" class="lock-countdown"></p>
-    </div>
-  </div>
+  <div id="particles"></div>
 
   <header class="header">
-    <div class="header-left">
-      <img src="logo.png" class="logo">
-      <div class="title">
-        <h1>BLK Games</h1>
-        <p>Unblocked • Fast • Electric</p>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="status-pill" id="maintenanceStatus">Online</div>
-      <a href="admin.html" class="admin-link">Admin</a>
+    <img src="logo.png" class="logo">
+    <div class="title">
+      <h1>BLK Games</h1>
+      <p>Unblocked • Fast • Electric</p>
     </div>
   </header>
 
@@ -79,27 +60,21 @@
     <p class="fullscreen-hint">Press F11 for fullscreen</p>
   </div>
 
-  <!-- Copilot-style AI orb -->
-  <button class="ai-orb" id="aiButton">
-    <span class="ai-orb-glow"></span>
-    <span class="ai-orb-icon">◎</span>
-  </button>
+  <div class="ai-orb" id="aiButton"></div>
 
   <div class="ai-modal hidden" id="aiModal">
     <div class="ai-modal-header">
-      <div class="ai-header-left">
-        <div class="ai-avatar">C</div>
-        <div>
-          <strong>BLK Copilot</strong>
-          <p class="ai-subtitle">Chat • Help • Smart Assist</p>
-        </div>
-      </div>
-      <button id="aiClose" class="ai-close-btn">✕</button>
+      <strong>AI Mode</strong>
+      <button id="aiClose">X</button>
     </div>
     <div class="ai-messages" id="aiMessages"></div>
-    <div class="ai-input-row">
-      <input id="aiInput" placeholder="Ask BLK Copilot anything...">
-      <button id="aiSend">➤</button>
+    <input id="aiInput" placeholder="Ask something...">
+  </div>
+
+  <div class="maintenance hidden" id="maintenanceOverlay">
+    <div class="maintenance-box">
+      <h2>Maintenance Mode</h2>
+      <p>The site is currently under maintenance.</p>
     </div>
   </div>
 
