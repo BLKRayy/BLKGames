@@ -6,26 +6,6 @@
   <title>BLK Games</title>
   <link rel="stylesheet" href="style.css">
 </head>
-  <!-- AI ORB -->
-<button id="aiButton" class="ai-orb">◎</button>
-
-<!-- AI MODAL -->
-<div id="aiModal" class="ai-modal hidden">
-  <div class="ai-header">
-    <div class="ai-avatar">C</div>
-    <div class="ai-title">BLK Copilot</div>
-    <button id="aiClose" class="ai-close">✕</button>
-  </div>
-
-  <div id="aiMessages" class="ai-messages"></div>
-
-  <div class="ai-input-row">
-    <button id="aiMic" class="ai-mic">🎤</button>
-    <input id="aiInput" placeholder="Ask me anything...">
-    <button id="aiSend" class="ai-send">➤</button>
-  </div>
-</div>
-
 <body class="site-fade-in">
 
   <!-- LOCKDOWN OVERLAY -->
@@ -75,6 +55,26 @@
       <div id="allGames" class="game-list"></div>
     </section>
   </main>
+
+  <!-- AI ORB -->
+  <button id="aiButton" class="ai-orb">◎</button>
+
+  <!-- AI MODAL -->
+  <div id="aiModal" class="ai-modal hidden">
+    <div class="ai-header">
+      <div class="ai-avatar">C</div>
+      <div class="ai-title">BLK Copilot</div>
+      <button id="aiClose" class="ai-close">✕</button>
+    </div>
+
+    <div id="aiMessages" class="ai-messages"></div>
+
+    <div class="ai-input-row">
+      <button id="aiMic" class="ai-mic">🎤</button>
+      <input id="aiInput" placeholder="Ask me anything...">
+      <button id="aiSend" class="ai-send">➤</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
