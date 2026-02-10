@@ -9,7 +9,17 @@
 
 <body class="site-fade-in">
 
-  <div id="particles"></div>
+  <!-- Lockdown Takeover -->
+  <div id="lockdownScreen" class="lockdown-screen hidden">
+    <div class="lockdown-box">
+      <div class="lock-icon">🔒</div>
+      <h1 class="lock-title">ACCESS RESTRICTED</h1>
+      <p class="lock-subtitle">Access Has Been Disabled by the Administrator</p>
+      <p id="lockMessage" class="lock-message"></p>
+      <p id="lockTime" class="lock-time"></p>
+      <p id="lockCountdown" class="lock-countdown"></p>
+    </div>
+  </div>
 
   <header class="header">
     <div class="header-left">
@@ -24,12 +34,6 @@
       <a href="admin.html" class="admin-link">Admin</a>
     </div>
   </header>
-
-  <section class="banner" id="lockdownBanner" style="display:none;">
-    <h2>Server Lockdown</h2>
-    <p id="lockdownMessage">The server is currently locked.</p>
-    <p id="lockdownTimer"></p>
-  </section>
 
   <section class="search-area">
     <input id="searchInput" placeholder="Search games...">
@@ -72,38 +76,28 @@
     <p class="fullscreen-hint">Press F11 for fullscreen</p>
   </div>
 
-  <!-- Copilot-style AI orb -->
+  <!-- AI Orb -->
   <button class="ai-orb" id="aiButton">
     <span class="ai-orb-glow"></span>
     <span class="ai-orb-icon">◎</span>
   </button>
 
+  <!-- AI Modal -->
   <div class="ai-modal hidden" id="aiModal">
     <div class="ai-modal-header">
       <div class="ai-header-left">
         <div class="ai-avatar">C</div>
         <div>
           <strong>BLK Copilot</strong>
-          <p class="ai-subtitle">Chat • Help • Shortcuts</p>
+          <p class="ai-subtitle">Chat • Help • Smart Assist</p>
         </div>
       </div>
       <button id="aiClose" class="ai-close-btn">✕</button>
     </div>
-    <div class="ai-messages" id="aiMessages">
-      <div class="ai-message ai-message-bot">
-        <p>Hey, I’m your BLK Copilot. Ask me about games, categories, or what’s new.</p>
-      </div>
-    </div>
+    <div class="ai-messages" id="aiMessages"></div>
     <div class="ai-input-row">
-      <input id="aiInput" placeholder="Ask BLK Copilot something...">
+      <input id="aiInput" placeholder="Ask BLK Copilot...">
       <button id="aiSend">➤</button>
-    </div>
-  </div>
-
-  <div class="maintenance-overlay hidden" id="maintenanceOverlay">
-    <div class="maintenance-box">
-      <h2>Maintenance Mode</h2>
-      <p>The site is currently under maintenance.</p>
     </div>
   </div>
 
