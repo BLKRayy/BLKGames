@@ -3,15 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BLK Admin</title>
+  <title>BLK Admin Panel</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 16px;
+    }
+
+    .admin-section {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .admin-section h2 {
+      margin-bottom: 10px;
+    }
+
+    .admin-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .admin-row button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    #loginBox {
+      max-width: 350px;
+      margin: 80px auto;
+      padding: 20px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    #loginBox input {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+    }
+
+    #loginBtn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 
 <body class="theme-dark">
 
-  <header class="header">
-    <div class="left">
-      <img src="logo.png" class="logo">
-      <div>
-        <h1>BLK Admin</h1>
-        <p>Control Panel</p>
+  <div id="loginBox">
+    <h2>Admin Login</h2>
+    <input id="user" placeholder="Username">
+    <input id="pass" placeholder="Password" type="password">
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <div id="adminPanel" class="admin-container hidden">
+
+    <header class="header">
+      <div class="left">
+        <img src="logo.png" class="logo">
+        <div>
+          <h1>BLK Admin</h1>
+          <p>Control Panel</p>
+        </div>
+      </div>
+      <div class="right">
+        <a href="index.html" class="admin-link">Back to Site</a>
+      </div>
+    </header>
+
+    <div class="admin-section">
+      <h2>Featured Games</h2>
+      <div id="featuredEditor"></div>
+    </div>
+
+    <div class="admin-section">
+      <h2>Edit Games</h2>
+      <div id="gameEditor"></div>
+    </div>
+
+    <div class="admin-section">
+      <h2>Import / Export</h2>
+      <button id="exportBtn">Export Games</button>
+      <br><br>
+      <input type="file" id="importFile">
+      <button id="importBtn">Import Games</button>
+    </div>
+
+    <div class="admin-section">
+      <h2>Maintenance Mode</h2>
+      <label>
+        <input type="checkbox" id="maintToggle">
+        Enable Maintenance
+      </label>
+    </div>
+
+    <div class="admin-section">
+      <h2>Global Lockdown</h2>
+      <input id="lockMsg" placeholder="Lockdown message" style="width:100%;padding:8px;margin-bottom:8px;">
+      <input id="lockMinutes" placeholder="Minutes" type="number" style="width:100%;padding:8px;margin-bottom:8px;">
+      <button id="lockBtn">Activate Lockdown</button>
+      <button id="unlockBtn" style="background:#b91c1c;margin-left:10px;">Remove Lockdown</button>
+    </div>
+
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
