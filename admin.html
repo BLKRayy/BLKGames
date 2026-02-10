@@ -41,6 +41,7 @@
         <button data-page="games">Game Editor</button>
         <button data-page="importexport">Import / Export</button>
         <button data-page="logs">Player Logs</button>
+        <button data-page="ai">AI Helper</button>
         <button id="adminLogout">Sign out</button>
       </aside>
 
@@ -98,6 +99,14 @@
         <section class="admin-page" id="page-logs">
           <h2>Player Logs</h2>
           <div id="logViewer"></div>
+        </section>
+
+        <section class="admin-page" id="page-ai">
+          <h2>AI Helper (Math)</h2>
+          <p>Type a math problem (like "3 + 4 * 2" or "12 / 3 + 5") and click Solve.</p>
+          <textarea id="aiQuestion" placeholder="Enter a math expression..."></textarea>
+          <button id="aiSolve">Solve</button>
+          <p id="aiAnswer" style="margin-top:8px;font-size:14px;color:#a5b4fc;"></p>
         </section>
 
       </main>
