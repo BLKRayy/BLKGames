@@ -3,72 +3,84 @@
     "name": "1v1.lol",
     "category": "Shooting",
     "url": "https://1v1.lol",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "1v1.space",
     "category": "Arcade",
     "url": "https://1v1.space",
-    "featured": false
+    "featured": false,
+    "logo": ""
   },
   {
     "name": "10 Minutes Till Dawn",
     "category": "Action",
     "url": "https://10minutestilldawn.io",
-    "featured": false
+    "featured": false,
+    "logo": ""
   },
   {
     "name": "2048",
     "category": "Puzzle",
     "url": "https://play2048.co",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "A Dark Room",
     "category": "Adventure",
     "url": "https://adarkroom.doublespeakgames.com",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Among Us",
     "category": "Multiplayer",
     "url": "https://amongusplay.online",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Bad Ice Cream",
     "category": "Puzzle",
     "url": "https://badicecream.online",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Baldi’s Basics",
     "category": "Horror",
     "url": "https://baldis-basics.com",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Basketball Stars",
     "category": "Sports",
     "url": "https://basketballstars.io",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Moto X3M",
     "category": "Racing",
     "url": "https://motox3m.co",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Run 3",
     "category": "Platformer",
     "url": "https://run3.io",
-    "featured": true
+    "featured": true,
+    "logo": ""
   },
   {
     "name": "Subway Surfers",
     "category": "Endless Runner",
     "url": "https://subwaysurfers.io",
-    "featured": true
+    "featured": true,
+    "logo": ""
   }
 ]
