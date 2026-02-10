@@ -99,53 +99,91 @@ function applyMaintenanceStatus() {
   }
 }
 
-// Lockdown overlay
-function applyLockdown() {
-  const screen = document.getElementById("lockdownScreen");
-  if (!screen) return;
+// =========================
+// GLOBAL LOCKDOWN SYSTEM
+// =========================
 
-  const data = JSON.parse(localStorage.getItem("lockdownData") || "null");
+const lockdownScreen = document.getElementById("lockdownScreen");
+const lockMessage = document.getElementById("lockMessage");
+const lockTime = document.getElementById("lockTime");
+const lockCountdown = document.getElementById("lockCountdown");
+
+let lockdownInterval = null;
+
+function applyGlobalLockdown(data) {
   if (!data) {
-    screen.classList.add("hidden");
+    lockdownScreen.classList.add("hidden");
+    if (lockdownInterval) clearInterval(lockdownInterval);
     return;
   }
 
+  lockdownScreen.classList.remove("hidden");
+
   function update() {
     const now = Date.now();
-    if (now >= data.endTime) {
-      localStorage.removeItem("lockdownData");
-      screen.classList.add("hidden");
+    if (now >= data.end) {
+      clearInterval(lockdownInterval);
+      localStorage.removeItem("globalLockdown");
+      lockdownScreen.classList.add("hidden");
       return;
     }
 
-    const diff = data.endTime - now;
+    const diff = data.end - now;
     const mins = Math.floor(diff / 60000);
     const secs = Math.floor((diff % 60000) / 1000);
 
-    document.getElementById("lockMessage").textContent = data.message;
-    document.getElementById("lockTime").textContent =
-      "Current Time: " + new Date().toLocaleTimeString();
-    document.getElementById("lockCountdown").textContent =
-      "Lockdown ends in: " + mins + "m " + secs + "s";
+    lockMessage.textContent = data.msg;
+    lockTime.textContent = "Current Time: " + new Date().toLocaleTimeString();
+    lockCountdown.textContent = `Lockdown ends in: ${mins}m ${secs}s`;
   }
 
-  screen.classList.remove("hidden");
   update();
-  setInterval(update, 1000);
+  lockdownInterval = setInterval(update, 1000);
 }
 
-// Events
+function readLockdownFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const isLock = params.get("lockdown");
+  const end = params.get("end");
+  const msg = params.get("msg");
+
+  if (isLock === "1" && end) {
+    const data = {
+      end: parseInt(end, 10),
+      msg: decodeURIComponent(msg || "Access Has Been Disabled by the Administrator")
+    };
+
+    localStorage.setItem("globalLockdown", JSON.stringify(data));
+    applyGlobalLockdown(data);
+    return;
+  }
+
+  const stored = localStorage.getItem("globalLockdown");
+  if (stored) {
+    try {
+      const data = JSON.parse(stored);
+      if (data.end > Date.now()) {
+        applyGlobalLockdown(data);
+      } else {
+        localStorage.removeItem("globalLockdown");
+        applyGlobalLockdown(null);
+      }
+    } catch {
+      localStorage.removeItem("globalLockdown");
+      applyGlobalLockdown(null);
+    }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  const searchInput = document.getElementById("searchInput");
-  const categoryFilter = document.getElementById("categoryFilter");
-
-  if (searchInput) searchInput.addEventListener("input", renderGames);
-  if (categoryFilter) categoryFilter.addEventListener("change", renderGames);
-
-  loadGames();
-  applyMaintenanceStatus();
-  applyLockdown();
+  readLockdownFromURL();
 });
+const overrideBtn = document.getElementById("lockdownOverrideBtn");
+if (overrideBtn) {
+  overrideBtn.addEventListener("click", () => {
+    window.location.href = "admin.html";
+  });
+}
 
 
 
