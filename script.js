@@ -1,4 +1,7 @@
-// Load games and render homepage
+// =========================
+// GAME LOADING + HOMEPAGE RENDER
+// =========================
+
 let gamesData = [];
 
 function loadGames() {
@@ -83,7 +86,10 @@ function openGame(urlEncoded) {
   localStorage.setItem("playCounts", JSON.stringify(playCounts));
 }
 
-// Maintenance indicator
+// =========================
+// MAINTENANCE INDICATOR
+// =========================
+
 function applyMaintenanceStatus() {
   const pill = document.getElementById("maintenanceStatus");
   if (!pill) return;
@@ -100,7 +106,7 @@ function applyMaintenanceStatus() {
 }
 
 // =========================
-// GLOBAL LOCKDOWN SYSTEM
+// GLOBAL LOCKDOWN SYSTEM (NEW)
 // =========================
 
 const lockdownScreen = document.getElementById("lockdownScreen");
@@ -175,9 +181,10 @@ function readLockdownFromURL() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  readLockdownFromURL();
-});
+// =========================
+// LOCKDOWN OVERRIDE BUTTON
+// =========================
+
 const overrideBtn = document.getElementById("lockdownOverrideBtn");
 if (overrideBtn) {
   overrideBtn.addEventListener("click", () => {
@@ -185,10 +192,24 @@ if (overrideBtn) {
   });
 }
 
+// =========================
+// HOMEPAGE EVENTS
+// =========================
 
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  if (searchInput) searchInput.addEventListener("input", renderGames);
+  if (categoryFilter) categoryFilter.addEventListener("change", renderGames);
+
+  loadGames();
+  applyMaintenanceStatus();
+  readLockdownFromURL();
+});
 
 // =========================
-// HOMEPAGE AI SYSTEM
+// AI SYSTEM (UNCHANGED)
 // =========================
 
 const aiButton = document.getElementById("aiButton");
@@ -286,7 +307,6 @@ aiInput.addEventListener("keydown", e => {
   if (e.key === "Enter") sendAi();
 });
 
-// Draggable AI window
 let isDragging = false;
 let offsetX = 0;
 let offsetY = 0;
@@ -306,7 +326,6 @@ document.addEventListener("mousemove", e => {
   }
 });
 
-// Voice input
 aiMic.addEventListener("click", () => {
   const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   rec.lang = "en-US";
