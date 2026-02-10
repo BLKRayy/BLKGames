@@ -340,6 +340,7 @@ body {
 .hidden {
   display: none !important;
 }
+
 /* AI ORB */
 .ai-orb {
   position: fixed;
