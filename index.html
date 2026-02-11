@@ -9,18 +9,64 @@
 
 <body class="theme-dark">
 
+  <!-- PARTICLE BACKGROUND -->
+  <div class="particle-layer">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <!-- LOCKDOWN SCREEN -->
   <div id="lockdownScreen" class="lockdown hidden">
-    <div class="lock-box">
-      <h1>ACCESS RESTRICTED</h1>
-      <p id="lockMsg"></p>
-      <p id="lockCountdown"></p>
-      <button id="lockAdmin">Admin Override</button>
+    <div class="lock-admin-top">
+      <a href="admin.html" class="lock-admin-link">Admin Panel</a>
+    </div>
+
+    <div class="lock-card">
+      <div class="lock-icon">🔒</div>
+      <h1>Access Restricted</h1>
+      <h2>After School Hours Lockdown</h2>
+
+      <div class="lock-row">
+        <div class="lock-label">CURRENT TIME</div>
+        <div id="lockCurrentTime" class="lock-value"></div>
+      </div>
+
+      <p class="lock-text">
+        I'm sorry, but you cannot access this website after school hours.
+      </p>
+
+      <div class="lock-row">
+        <div class="lock-label">AVAILABLE HOURS</div>
+        <div class="lock-value">7:00 AM – 4:00 PM Eastern Time</div>
+      </div>
+
+      <div class="lock-row">
+        <div class="lock-label">NEXT UNLOCK</div>
+        <div id="lockNextUnlock" class="lock-value"></div>
+      </div>
+
+      <p class="lock-sub">
+        This page will automatically unlock when access is restored.
+      </p>
+
+      <button id="lockAdminOverride" class="lock-override">
+        Admin Override
+      </button>
     </div>
   </div>
 
-  <header class="header">
+  <!-- MAIN UI -->
+  <header class="header glass">
     <div class="left">
-      <img src="logo.png" class="logo">
+      <div class="logo-ring">
+        <div class="logo-core">BLK</div>
+      </div>
       <div>
         <h1>BLK Games</h1>
         <p>Unblocked • Fast • Clean</p>
@@ -35,13 +81,31 @@
 
   <main class="main">
 
-    <section class="top-controls">
-      <button id="themeToggle" class="pill">Theme</button>
-      <button id="profileBtn" class="pill">Profile</button>
+    <section class="hero glass">
+      <div class="hero-left">
+        <div class="hero-tag">FEATURED</div>
+        <h2 id="heroTitle">Retro Bowl</h2>
+        <p id="heroDesc">
+          Lead your team to glory in this nostalgic football sim.
+        </p>
+        <button id="heroPlay" class="glow-btn">Play Now</button>
+      </div>
+      <div class="hero-right">
+        <div class="hero-ring">
+          <div class="hero-inner">
+            <span id="heroGameName">Retro Bowl</span>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="search-row">
-      <input id="searchInput" class="search" placeholder="Search games...">
+    <section class="top-controls">
+      <button id="themeToggle" class="pill glow-pill">Theme</button>
+      <button id="profileBtn" class="pill glow-pill">Profile</button>
+    </section>
+
+    <section class="search-row glass">
+      <input id="searchInput" class="search" placeholder="Search for titles...">
       <select id="categoryFilter" class="filter"></select>
     </section>
 
@@ -51,17 +115,13 @@
     </section>
 
     <section>
-      <h2>Favorites</h2>
+      <h2>Favorite Games</h2>
+      <p class="section-sub">Star your favorite games to see them here.</p>
       <div id="favoriteGames" class="grid"></div>
     </section>
 
     <section>
-      <h2>Recently Played</h2>
-      <div id="recentGames" class="grid"></div>
-    </section>
-
-    <section>
-      <h2>Featured</h2>
+      <h2>Featured Games</h2>
       <div id="featuredGames" class="grid"></div>
     </section>
 
@@ -72,6 +132,7 @@
 
   </main>
 
+  <!-- AI ORB -->
   <button id="aiButton" class="ai-orb">◎</button>
 
   <div id="aiModal" class="ai-modal hidden">
