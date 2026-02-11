@@ -1,6 +1,8 @@
 let games = [];
 let profile = null;
+let heroGame = null;
 
+/* PROFILE + THEME */
 function loadProfile() {
   const saved = localStorage.getItem("blkProfile");
   if (saved) {
@@ -27,14 +29,13 @@ function toggleTheme() {
   applyTheme(profile.theme);
 }
 
+/* GAMES */
 function loadGames() {
-  fetch("games.json")
+  return fetch("games.json")
     .then(r => r.json())
     .then(data => {
       const custom = localStorage.getItem("customGames");
       games = custom ? JSON.parse(custom) : data;
-      populateCategories();
-      renderAll();
     });
 }
 
@@ -76,7 +77,6 @@ function filteredGames() {
 
 function renderAll() {
   const fav = document.getElementById("favoriteGames");
-  const rec = document.getElementById("recentGames");
   const feat = document.getElementById("featuredGames");
   const all = document.getElementById("allGames");
 
@@ -90,11 +90,7 @@ function renderAll() {
     .map(card)
     .join("");
 
-  rec.innerHTML = profile.recent
-    .map(u => games.find(g => g.url === u))
-    .filter(Boolean)
-    .map(card)
-    .join("");
+  updateHero();
 }
 
 function card(g) {
@@ -104,8 +100,8 @@ function card(g) {
         <img src="${g.logo || 'default-icon.png'}">
       </div>
       <button class="fav" onclick="toggleFav(event,'${g.url}')">★</button>
-      <div>${g.name}</div>
-      <div style="font-size:12px;color:#9ca3af">${g.category}</div>
+      <div style="margin-top:6px;font-size:14px;">${g.name}</div>
+      <div style="font-size:11px;color:#9ca3af">${g.category}</div>
     </div>
   `;
 }
@@ -135,9 +131,22 @@ function openGame(url) {
   profile.recent.unshift(url);
   if (profile.recent.length > 10) profile.recent.pop();
   saveProfile();
-  renderAll();
 }
 
+/* HERO FEATURED */
+function updateHero() {
+  const featured = games.filter(g => g.featured);
+  heroGame = featured[0] || games[0];
+  if (!heroGame) return;
+
+  document.getElementById("heroTitle").textContent = heroGame.name;
+  document.getElementById("heroGameName").textContent = heroGame.name;
+  document.getElementById("heroDesc").textContent =
+    heroGame.description ||
+    "Jump in and play instantly in your browser.";
+}
+
+/* MAINTENANCE */
 function applyMaintenance() {
   const pill = document.getElementById("maintStatus");
   const m = localStorage.getItem("maintenance") === "true";
@@ -145,31 +154,70 @@ function applyMaintenance() {
   pill.style.background = m ? "#451a03" : "#022c22";
 }
 
+/* LOCKDOWN (HARD BLOCK) */
 function applyLockdown() {
   const box = document.getElementById("lockdownScreen");
-  const data = JSON.parse(localStorage.getItem("globalLockdown") || "null");
-  if (!data) return;
+  const dataRaw = localStorage.getItem("globalLockdown");
+  if (!dataRaw) return false;
+
+  const data = JSON.parse(dataRaw);
+  const now = Date.now();
+  if (now >= data.end) {
+    localStorage.removeItem("globalLockdown");
+    return false;
+  }
 
   box.classList.remove("hidden");
+
+  const currentEl = document.getElementById("lockCurrentTime");
+  const nextEl = document.getElementById("lockNextUnlock");
+
+  function formatTime(d) {
+    return d.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+      timeZone: "America/New_York"
+    }) + " EST";
+  }
+
+  function formatNextUnlock(endMs) {
+    const d = new Date(endMs);
+    return d.toLocaleString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "America/New_York"
+    });
+  }
 
   function tick() {
     const now = Date.now();
     if (now >= data.end) {
       localStorage.removeItem("globalLockdown");
-      box.classList.add("hidden");
+      location.reload();
       return;
     }
-    const diff = data.end - now;
-    const m = Math.floor(diff / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById("lockMsg").textContent = data.msg;
-    document.getElementById("lockCountdown").textContent = `${m}m ${s}s`;
+    currentEl.textContent = formatTime(new Date());
+    nextEl.textContent = formatNextUnlock(data.end);
   }
 
   tick();
   setInterval(tick, 1000);
+
+  // Admin override button -> go to admin panel
+  document.getElementById("lockAdminOverride").onclick = () => {
+    window.location.href = "admin.html";
+  };
+
+  return true;
 }
 
+/* AI (same as before, shortened) */
 function initAI() {
   const modal = document.getElementById("aiModal");
   const btn = document.getElementById("aiButton");
@@ -188,7 +236,6 @@ function initAI() {
 
   function reply(q) {
     const t = q.toLowerCase();
-
     if (/^[0-9+\-*/().\s^]+$/.test(q)) {
       try {
         return "Answer: " + Function(`return (${q})`)();
@@ -196,16 +243,13 @@ function initAI() {
         return "Invalid math expression.";
       }
     }
-
     if (t.includes("favorite")) {
       if (!profile.favorites.length) return "You have no favorites yet.";
       return "Favorites: " + profile.favorites.length;
     }
-
     if (t.includes("games")) {
       return "Total games: " + games.length;
     }
-
     return "I can solve math, recommend games, and show your favorites.";
   }
 
@@ -229,11 +273,18 @@ function initAI() {
   };
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/* INIT */
+document.addEventListener("DOMContentLoaded", async () => {
+  // 1) Check lockdown FIRST. If active, stop everything else.
+  const locked = applyLockdown();
+  if (locked) return;
+
+  // 2) Normal flow
   loadProfile();
-  loadGames();
+  await loadGames();
+  populateCategories();
+  renderAll();
   applyMaintenance();
-  applyLockdown();
 
   document.getElementById("themeToggle").onclick = toggleTheme;
   document.getElementById("profileBtn").onclick = () => {
@@ -246,6 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("searchInput").oninput = renderAll;
   document.getElementById("categoryFilter").onchange = renderAll;
+
+  document.getElementById("heroPlay").onclick = () => {
+    if (heroGame) openGame(heroGame.url);
+  };
 
   initAI();
 });
